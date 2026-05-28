@@ -45,14 +45,19 @@ class CinemaHall(models.Model):
 class MovieSession(models.Model):
     show_time = models.DateTimeField()
     cinema_hall = models.ForeignKey(
-        to=CinemaHall, on_delete=models.CASCADE, related_name="movie_sessions"
+        to=CinemaHall,
+        on_delete=models.CASCADE,
+        related_name="movie_sessions",
     )
     movie = models.ForeignKey(
         to=Movie, on_delete=models.CASCADE, related_name="movie_sessions"
     )
 
     def __str__(self) -> str:
-        return f"{self.movie.title} {self.show_time.strftime('%Y-%m-%d %H:%M:%S')}"
+        return (
+            f"{self.movie.title} "
+            f"{self.show_time.strftime('%Y-%m-%d %H:%M:%S')}"
+        )
 
 
 class User(AbstractUser):
@@ -61,7 +66,9 @@ class User(AbstractUser):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
 
     class Meta:
         ordering = ["-created_at"]
@@ -72,14 +79,10 @@ class Order(models.Model):
 
 class Ticket(models.Model):
     movie_session = models.ForeignKey(
-        "MovieSession",
-        on_delete=models.CASCADE,
-        related_name="tickets"
+        "MovieSession", on_delete=models.CASCADE, related_name="tickets"
     )
     order = models.ForeignKey(
-        "Order",
-        on_delete=models.CASCADE,
-        related_name="tickets"
+        "Order", on_delete=models.CASCADE, related_name="tickets"
     )
     row = models.IntegerField()
     seat = models.IntegerField()
@@ -88,8 +91,8 @@ class Ticket(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["row", "seat", "movie_session"],
-                name="unique_ticket_movie_session_seat"
-            )
+                name="unique_ticket_movie_session_seat",
+                )
         ]
 
     def __str__(self) -> str:
@@ -105,12 +108,14 @@ class Ticket(models.Model):
 
         if not (1 <= self.row <= cinema_hall.rows):
             errors["row"] = [
-                f"row number must be in available range: (1, rows): (1, {cinema_hall.rows})"
+                f"row number must be in available range: "
+                f"(1, rows): (1, {cinema_hall.rows})"
             ]
 
         if not (1 <= self.seat <= cinema_hall.seats_in_row):
             errors["seat"] = [
-                f"seat number must be in available range: (1, seats_in_row): (1, {cinema_hall.seats_in_row})"
+                f"seat number must be in available range: "
+                f"(1, seats_in_row): (1, {cinema_hall.seats_in_row})"
             ]
 
         if errors:

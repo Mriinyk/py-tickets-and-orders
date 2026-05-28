@@ -7,16 +7,14 @@ from db.models import Order, User, Ticket
 
 @transaction.atomic
 def create_order(
-        tickets: list[dict[str, Any]],
-        username: str,
-        date: Optional[str] = None,
+    tickets: list[dict[str, Any]],
+    username: str,
+    date: Optional[str] = None,
 ) -> Order:
     user = User.objects.get(username=username)
 
-    # Спочатку створюємо замовлення у базі
     order = Order.objects.create(user=user)
 
-    # Якщо дату передано, перезаписуємо її поверх автоматичної (це вже операція оновлення)
     if date:
         order.created_at = date
         order.save()
