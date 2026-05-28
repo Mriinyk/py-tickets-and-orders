@@ -1,5 +1,5 @@
 from typing import Optional
-from db.models import User
+from django.contrib.auth import get_user_model
 
 
 def create_user(
@@ -8,8 +8,7 @@ def create_user(
     email: Optional[str] = None,
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
-) -> User:
-    # Збираємо лише ті необов'язкові аргументи, які були передані
+):
     kwargs = {}
     if email is not None:
         kwargs["email"] = email
@@ -18,15 +17,15 @@ def create_user(
     if last_name is not None:
         kwargs["last_name"] = last_name
 
-    return User.objects.create_user(
+    return get_user_model().objects.create_user(
         username=username,
         password=password,
         **kwargs
     )
 
 
-def get_user(user_id: int) -> User:
-    return User.objects.get(id=user_id)
+def get_user(user_id: int):
+    return get_user_model().objects.get(id=user_id)
 
 
 def update_user(
@@ -36,8 +35,8 @@ def update_user(
     email: Optional[str] = None,
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
-) -> User:
-    user = User.objects.get(id=user_id)
+):
+    user = get_user(user_id)
 
     if username:
         user.username = username

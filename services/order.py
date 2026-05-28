@@ -1,8 +1,9 @@
 from typing import Optional, Any
 from django.db import transaction
 from django.db.models import QuerySet
+from django.contrib.auth import get_user_model
 
-from db.models import Order, User, Ticket
+from db.models import Order, Ticket
 
 
 @transaction.atomic
@@ -11,7 +12,7 @@ def create_order(
     username: str,
     date: Optional[str] = None,
 ) -> Order:
-    user = User.objects.get(username=username)
+    user = get_user_model().objects.get(username=username)
 
     order = Order.objects.create(user=user)
 
