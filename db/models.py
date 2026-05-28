@@ -92,7 +92,7 @@ class Ticket(models.Model):
             models.UniqueConstraint(
                 fields=["row", "seat", "movie_session"],
                 name="unique_ticket_movie_session_seat",
-                )
+            )
         ]
 
     def __str__(self) -> str:
